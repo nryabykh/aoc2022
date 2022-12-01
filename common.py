@@ -19,3 +19,7 @@ def get_test_input(task_number: int) -> list[str]:
 
 def get_input(task_number: int) -> list[str]:
     return _read_file(_get_filename(task_number, is_test=False))
+
+
+def get_data(task_number: int, is_test: bool) -> list[str]:
+    return get_input(task_number) if not is_test else get_test_input(task_number)

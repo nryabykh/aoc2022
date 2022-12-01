@@ -1,8 +1,8 @@
-from common import get_input, get_test_input
+from common import get_data
 
 
 def solve(is_test: bool):
-    data = get_input(1) if not is_test else get_test_input(1)
+    data = get_data(1, is_test)
 
     carries =[]
     current = 0
