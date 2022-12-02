@@ -32,12 +32,13 @@ class BaseSolver(ABC):
     Abstract class for solutions
     """
 
-    def __init__(self, day: int, is_test: bool):
-        self.is_test = is_test
-        self.data = Reader(day, is_test).get_data()
+    def __init__(self, day: int):
+        self.day = day
+        self.data = None
         self.inner = dict()
 
-    def solve(self) -> Answer:
+    def solve(self, test: bool) -> Answer:
+        self.data = Reader(day=self.day, is_test=test).get_data()
         one, two = self._solve()
         return Answer(one, two)
 

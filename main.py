@@ -10,7 +10,7 @@ parser.add_argument('-t', '--test', action='store_true')
 def main(_day: int, _test: bool):
     cls = getattr(import_module(f"solutions.day{_day:02}"), 'Solver')
     print(
-        cls(_day, _test).solve()
+        cls(_day).solve(_test)
     )
 
 

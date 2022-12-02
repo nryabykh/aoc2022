@@ -7,9 +7,8 @@ from common import BaseSolver
 
 
 class Solver(BaseSolver):
-    def __init__(self, day: int, is_test: bool):
-        super().__init__(day, is_test)
-        self.data = [d.lower().split() for d in self.data]
+    def __init__(self, day: int):
+        super().__init__(day)
         self.wins = (
             ('rock', 'scissors'),
             ('scissors', 'paper'),
@@ -18,6 +17,10 @@ class Solver(BaseSolver):
         self.op_turns = {'a': 'rock', 'b': 'paper', 'c': 'scissors'}
         self.scores_turn = {'rock': 1, 'paper': 2, 'scissors': 3}
         self.scores_result = {'lose': 0, 'draw': 3, 'win': 6}
+
+    def _solve(self):
+        self.data = [d.lower().split() for d in self.data]
+        return self._solve_one(), self._solve_two()
 
     def _solve_one(self):
         my_turns = {'x': 'rock', 'y': 'paper', 'z': 'scissors'}
