@@ -1,22 +1,21 @@
-import sys
+import argparse
 from importlib import import_module
 
 
-def main(args: list[str]):
-    tn = args[0]
-    if not tn.isdigit():
-        return
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--day', type=int)
+parser.add_argument('-t', '--test', action='store_true')
 
-    tn = int(tn)
-    is_test = True if len(args) > 1 and args[1] == 'test' else False
 
-    func = getattr(import_module(f"solutions.task{tn:02}"), 'solve')
-    func(is_test=is_test)
+def main(_day: int, _test: bool):
+    func = getattr(import_module(f"solutions.day{_day:02}"), 'solve')
+    func(is_test=_test)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print('AoC solutions')
-        exit(0)
-    else:
-        main(sys.argv[1:])
+    args = parser.parse_args()
+    if args.day is None:
+        print('No day specified, run the 1st day puzzle as example...')
+
+    day = args.day if args.day is not None else 1
+    main(day, args.test)

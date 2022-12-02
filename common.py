@@ -3,8 +3,8 @@ from pathlib import Path
 base_dir = Path(__file__).parent
 
 
-def _get_filename(task_number: int, is_test: bool = False) -> str:
-    return f'{task_number:02}{"_test" if is_test else ""}.txt'
+def _get_filename(day: int, is_test: bool = False) -> str:
+    return f'{day:02}{"_test" if is_test else ""}.txt'
 
 
 def _read_file(filename: str):
@@ -13,13 +13,13 @@ def _read_file(filename: str):
         return [line.replace('\n', '') for line in lines]
 
 
-def get_test_input(task_number: int) -> list[str]:
-    return _read_file(_get_filename(task_number, is_test=True))
+def get_test_input(day: int) -> list[str]:
+    return _read_file(_get_filename(day, is_test=True))
 
 
-def get_input(task_number: int) -> list[str]:
-    return _read_file(_get_filename(task_number, is_test=False))
+def get_input(day: int) -> list[str]:
+    return _read_file(_get_filename(day, is_test=False))
 
 
-def get_data(task_number: int, is_test: bool) -> list[str]:
-    return get_input(task_number) if not is_test else get_test_input(task_number)
+def get_data(day: int, is_test: bool) -> list[str]:
+    return get_input(day) if not is_test else get_test_input(day)

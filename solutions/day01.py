@@ -2,7 +2,7 @@ from common import get_data
 
 
 def solve(is_test: bool):
-    data = get_data(1, is_test)
+    data = get_data(day=1, is_test=is_test)
 
     carries =[]
     current = 0
