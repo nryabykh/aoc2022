@@ -9,10 +9,11 @@ Inputs: /input
 
 Code of solutions: /solutions
 
-Run:
+Usage:
 ```bash
-python3 main.py <task_number> [test]
+main.py [-h] [-d DAY] [-t]
 
-python3 main.py 1 test
-python3 main.py 1
+
+python3 main.py -d 1 -t
+python3 main.py --day 2
 ```
