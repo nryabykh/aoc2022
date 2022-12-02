@@ -1,25 +1,51 @@
+from dataclasses import dataclass
 from pathlib import Path
-
-base_dir = Path(__file__).parent
-
-
-def _get_filename(day: int, is_test: bool = False) -> str:
-    return f'{day:02}{"_test" if is_test else ""}.txt'
+from abc import ABC
+from typing import Any
 
 
-def _read_file(filename: str):
-    with open(base_dir / 'input' / filename) as f:
-        lines = f.readlines()
-        return [line.replace('\n', '') for line in lines]
+class Reader:
+    def __init__(self, day: int, is_test: bool):
+        self.day = day
+        self.test = is_test
+        self.base_dir = Path(__file__).parent
+        self.filename = f'{day:02}{"_test" if is_test else ""}.txt'
+
+    def get_data(self):
+        with open(self.base_dir / 'input' / self.filename) as f:
+            lines = f.readlines()
+            return [line.replace('\n', '') for line in lines]
 
 
-def get_test_input(day: int) -> list[str]:
-    return _read_file(_get_filename(day, is_test=True))
+@dataclass
+class Answer:
+    """
+    Dataclass for answers. Contains answers both of the first and of the second parts
+    """
+
+    one: Any
+    two: Any
 
 
-def get_input(day: int) -> list[str]:
-    return _read_file(_get_filename(day, is_test=False))
+class BaseSolver(ABC):
+    """
+    Abstract class for solutions
+    """
 
+    def __init__(self, day: int, is_test: bool):
+        self.is_test = is_test
+        self.data = Reader(day, is_test).get_data()
+        self.inner = dict()
 
-def get_data(day: int, is_test: bool) -> list[str]:
-    return get_input(day) if not is_test else get_test_input(day)
+    def solve(self) -> Answer:
+        one, two = self._solve()
+        return Answer(one, two)
+
+    def _solve(self):
+        return self._solve_one(), self._solve_two()
+
+    def _solve_one(self):
+        pass
+
+    def _solve_two(self):
+        pass

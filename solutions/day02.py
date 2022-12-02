@@ -1,59 +1,56 @@
-from common import get_data
+"""
+--- Day 2: Rock Paper Scissors ---
+https://adventofcode.com/2022/day/2
+"""
+
+from common import BaseSolver
 
 
-def solve(is_test: bool):
-    data = [d.lower().split() for d in get_data(day=2, is_test=is_test)]
+class Solver(BaseSolver):
+    def __init__(self, day: int, is_test: bool):
+        super().__init__(day, is_test)
+        self.data = [d.lower().split() for d in self.data]
+        self.wins = (
+            ('rock', 'scissors'),
+            ('scissors', 'paper'),
+            ('paper', 'rock')
+        )
+        self.op_turns = {'a': 'rock', 'b': 'paper', 'c': 'scissors'}
+        self.scores_turn = {'rock': 1, 'paper': 2, 'scissors': 3}
+        self.scores_result = {'lose': 0, 'draw': 3, 'win': 6}
 
-    op_turns = {'a': 'rock', 'b': 'paper', 'c': 'scissors'}
-    scores_turn = {'rock': 1, 'paper': 2, 'scissors': 3}
-    scores_result = {'lose': 0, 'draw': 3, 'win': 6}
+    def _solve_one(self):
+        my_turns = {'x': 'rock', 'y': 'paper', 'z': 'scissors'}
+        total = 0
+        for turn in self.data:
+            op, my = turn
+            op, my = self.op_turns.get(op), my_turns.get(my)
+            result = self._get_results(op, my)
+            total += self.scores_turn.get(my) + self.scores_result.get(result)
 
-    # Part One
-    my_turns = {'x': 'rock', 'y': 'paper', 'z': 'scissors'}
-    total = 0
-    for turn in data:
-        op, my = turn
-        op, my = op_turns.get(op), my_turns.get(my)
-        result = _get_results(op, my)
-        total += scores_turn.get(my) + scores_result.get(result)
+        return total
 
-    print(total)
+    def _solve_two(self):
+        targets = {'x': 'lose', 'y': 'draw', 'z': 'win'}
+        total = 0
+        for turn in self.data:
+            op, result = turn
+            op, result = self.op_turns.get(op), targets.get(result)
+            my = self._get_turn_to_result(op, result)
+            total += self.scores_turn.get(my) + self.scores_result.get(result)
 
-    # Part Two
-    targets = {'x': 'lose', 'y': 'draw', 'z': 'win'}
-    total = 0
-    for turn in data:
-        op, result = turn
-        op, result = op_turns.get(op), targets.get(result)
-        my = _get_turn_to_result(op, result)
-        total += scores_turn.get(my) + scores_result.get(result)
+        return total
 
-    print(total)
+    def _get_results(self, op_turn, my_turn):
+        if op_turn == my_turn:
+            return 'draw'
 
+        return 'lose' if (op_turn, my_turn) in self.wins else 'win'
 
-def _get_results(op_turn, my_turn):
-    wins = (
-        ('rock', 'scissors'),
-        ('scissors', 'paper'),
-        ('paper', 'rock')
-    )
-
-    if op_turn == my_turn:
-        return 'draw'
-
-    return 'lose' if (op_turn, my_turn) in wins else 'win'
-
-
-def _get_turn_to_result(op_turn, result):
-    wins = (
-        ('rock', 'scissors'),
-        ('scissors', 'paper'),
-        ('paper', 'rock')
-    )
-
-    if result == 'draw':
-        return op_turn
-    elif result == 'lose':
-        return next(my for op, my in wins if op == op_turn)
-    else:
-        return next(my for my, op in wins if op == op_turn)
+    def _get_turn_to_result(self, op_turn, result):
+        if result == 'draw':
+            return op_turn
+        elif result == 'lose':
+            return next(my for op, my in self.wins if op == op_turn)
+        else:
+            return next(my for my, op in self.wins if op == op_turn)

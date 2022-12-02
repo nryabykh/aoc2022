@@ -8,8 +8,10 @@ parser.add_argument('-t', '--test', action='store_true')
 
 
 def main(_day: int, _test: bool):
-    func = getattr(import_module(f"solutions.day{_day:02}"), 'solve')
-    func(is_test=_test)
+    cls = getattr(import_module(f"solutions.day{_day:02}"), 'Solver')
+    print(
+        cls(_day, _test).solve()
+    )
 
 
 if __name__ == "__main__":
