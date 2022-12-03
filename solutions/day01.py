@@ -7,9 +7,8 @@ from common import BaseSolver
 
 
 class Solver(BaseSolver):
-    def _solve(self):
+    def _prepare(self):
         self.inner['carries'] = self._get_carries()
-        return self._solve_one(), self._solve_two()
 
     def _solve_one(self):
         return max(self.inner['carries'])
