@@ -34,11 +34,10 @@ class BaseSolver(ABC):
 
     def __init__(self, day: int):
         self.day = day
-        self.data = None
-        self.inner = dict()
+        self.data = {}
 
     def solve(self, test: bool) -> Answer:
-        self.data = Reader(day=self.day, is_test=test).get_data()
+        self.data['input'] = Reader(day=self.day, is_test=test).get_data()
         self._prepare()
         one, two = self._solve()
         return Answer(one, two)
