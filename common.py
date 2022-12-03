@@ -39,8 +39,12 @@ class BaseSolver(ABC):
 
     def solve(self, test: bool) -> Answer:
         self.data = Reader(day=self.day, is_test=test).get_data()
+        self._prepare()
         one, two = self._solve()
         return Answer(one, two)
+
+    def _prepare(self):
+        pass
 
     def _solve(self):
         return self._solve_one(), self._solve_two()
