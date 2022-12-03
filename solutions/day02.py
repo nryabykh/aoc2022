@@ -8,15 +8,16 @@ from common import BaseSolver
 
 class Solver(BaseSolver):
     def _prepare(self):
-        self.data['wins'] = (
-            ('rock', 'scissors'),
-            ('scissors', 'paper'),
-            ('paper', 'rock')
-        )
-        self.data['op_turns'] = {'a': 'rock', 'b': 'paper', 'c': 'scissors'}
-        self.data['scores_turn'] = {'rock': 1, 'paper': 2, 'scissors': 3}
-        self.data['scores_result'] = {'lose': 0, 'draw': 3, 'win': 6}
-        self.data['input'] = [d.lower().split() for d in self.data['input']]
+        self.data = {
+            'input': [d.lower().split() for d in self.data['input']],
+            'wins': (
+                ('rock', 'scissors'),
+                ('scissors', 'paper'),
+                ('paper', 'rock')),
+            'op_turns': {'a': 'rock', 'b': 'paper', 'c': 'scissors'},
+            'scores_turn': {'rock': 1, 'paper': 2, 'scissors': 3},
+            'scores_result': {'lose': 0, 'draw': 3, 'win': 6}
+        }
 
     def _solve_one(self):
         my_turns = {'x': 'rock', 'y': 'paper', 'z': 'scissors'}
