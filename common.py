@@ -49,7 +49,7 @@ class BaseSolver(ABC):
         return self._solve_one(), self._solve_two()
 
     def _solve_one(self):
-        pass
+        ...
 
     def _solve_two(self):
-        pass
+        ...
