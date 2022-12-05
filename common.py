@@ -11,10 +11,12 @@ class Reader:
         self.base_dir = Path(__file__).parent
         self.filename = f'{day:02}{"_test" if is_test else ""}.txt'
 
+    def get_lines(self):
+        return self.get_data().splitlines()
+
     def get_data(self):
         with open(self.base_dir / 'input' / self.filename) as f:
-            lines = f.readlines()
-            return [line.replace('\n', '') for line in lines]
+            return f.read()
 
 
 @dataclass
@@ -37,7 +39,7 @@ class BaseSolver(ABC):
         self.data = {}
 
     def solve(self, test: bool) -> Answer:
-        self.data['input'] = Reader(day=self.day, is_test=test).get_data()
+        self.data['input'] = Reader(day=self.day, is_test=test).get_lines()
         self._prepare()
         one, two = self._solve()
         return Answer(one, two)
