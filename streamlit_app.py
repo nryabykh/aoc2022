@@ -14,7 +14,6 @@ def run(last_day: int):
     day_info = days_info[selected_day_number]
 
     st.subheader(f'[{day_info.title[4:-4]}]({day_info.url})' if day_info.title != parse.PARSE_EMPTY else '')
-    st.markdown('----')
     col_task, col_solution = st.columns(2, gap='large')
     with col_task:
         _print_task(day_info.texts)
@@ -99,8 +98,23 @@ def _print_solution(selected_day: int):
 
 
 st.set_page_config(page_icon='images/aoc-icon.png', page_title='Aoc22 Solutions', layout='wide')
-st.title('Advent of Code 2022')
+st.title('🎄 Advent of Code 2022')
+st.info("""❄️ Advent of Code is an annual set of Christmas-themed computer programming challenges that follow an Advent 
+calendar. 
+
+🥂  Each year, 25 puzzles are created and tested in advance by Eric Wastl, the founder of Advent of Code. They are 
+released on a daily schedule from December 1 to December 25 at midnight EST. Puzzles consist of two parts that must 
+be solved in order, with the second part not revealed to the user until the first part is solved correctly. 
+Participants earn one golden star for each part they finish, giving a possible total of two stars per day and fifty 
+stars per year. 
+
+🎅  Each puzzle contains a fictional backstory that is the same for all participants, but each person receives a 
+different piece of input data and should generate a different correct result.
+
+https://en.wikipedia.org/wiki/Advent_of_Code""")
+
 st.caption("""Below you can find inputs and answers eligible for my AoC account only. For you, there are other 
     inputs and other answers obviously. So copying and pasting my answers to your puzzles does not make any sense.""")
+st.markdown('----')
 
 run(last_day=25)
