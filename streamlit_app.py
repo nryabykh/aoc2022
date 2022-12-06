@@ -103,4 +103,4 @@ st.title('Advent of Code 2022')
 st.caption("""Below you can find inputs and answers eligible for my AoC account only. For you, there are other 
     inputs and other answers obviously. So copying and pasting my answers to your puzzles does not make any sense.""")
 
-run(last_day=7)
+run(last_day=25)
