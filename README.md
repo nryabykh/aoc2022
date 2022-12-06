@@ -10,11 +10,13 @@ My solutions of [Advent of Code 2022](https://adventofcode.com/2022).
 - Inputs: `./input`
 - Code: `./solutions`
 
-#### Usage
 ```bash
-main.py [-h] [-d DAY] [-t]
+usage: main.py [-h] [-d DAY] [-t]
 
+options:
+  -h, --help         show this help message and exit
+  -d DAY, --day DAY  Number of day (from 1 to 25)
+  -t, --test         Use test data
 
-python3 main.py -d 1 -t
-python3 main.py --day 2
+example: python3 main.py -d 6 -t
 ```

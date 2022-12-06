@@ -3,8 +3,8 @@ from importlib import import_module
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-d', '--day', type=int)
-parser.add_argument('-t', '--test', action='store_true')
+parser.add_argument('-d', '--day', type=int, help='Number of day (from 1 to 25)')
+parser.add_argument('-t', '--test', action='store_true', help='Use test data')
 
 
 def main(_day: int, _test: bool):
