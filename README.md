@@ -1,6 +1,6 @@
 # Advent of Code '22
 
-![](https://img.shields.io/badge/day%20📅-5-blue) ![](https://img.shields.io/badge/stars%20⭐-10-yellow) ![](https://img.shields.io/badge/days%20completed-5-red) [![Update AoC Badges](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml/badge.svg)](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml)
+![](https://img.shields.io/badge/day%20📅-6-blue) ![](https://img.shields.io/badge/stars%20⭐-12-yellow) ![](https://img.shields.io/badge/days%20completed-6-red) [![Update AoC Badges](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml/badge.svg)](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml)
 
 <img src="banner.jpeg" width="800" alt="AoC2000 banner"/>
 
