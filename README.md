@@ -20,3 +20,14 @@ options:
 
 example: python3 main.py -d 6 -t
 ```
+
+Or run Streamlit app which represents answers and solutions without explicit run:
+```
+chmod +x start.sh
+./start.sh
+
+or
+
+. venv/bin/activate
+streamlit run streamlit_app.py
+```

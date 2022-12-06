@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 import time
-from app.secrets import get_session_id
 
 PARSE_EMPTY = 'Not Available'
 
@@ -19,8 +18,8 @@ class DayInfo:
     texts: list[tuple[str, str]]
 
 
-def get_day_info(last_day: int) -> list[DayInfo]:
-    cookies = {'session': get_session_id()}
+def get_day_info(last_day: int, session_id: str) -> list[DayInfo]:
+    cookies = {'session': session_id}
     base_url = 'https://adventofcode.com/2022/day'
     days_data = []
     stop = False

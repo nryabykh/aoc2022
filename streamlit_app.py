@@ -2,11 +2,13 @@ import streamlit as st
 import inspect
 
 from app import parse
+from app.secrets import get_session_id
 from common import get_module, Reader
 
 
 def run(last_day: int):
-    days_info = _get_info(last_day)
+    session_id = get_session_id()
+    days_info = _get_info(last_day, session_id)
 
     selected_day_number = _select_from_sidebar(days=[d.title for d in days_info])
     day_info = days_info[selected_day_number]
@@ -21,9 +23,9 @@ def run(last_day: int):
         _print_solution(selected_day_number+1)
 
 
-@st.cache(ttl=3600)
-def _get_info(last_day: int):
-    return parse.get_day_info(last_day)
+@st.cache(ttl=3600, allow_output_mutation=True)
+def _get_info(last_day: int, session_id: str):
+    return parse.get_day_info(last_day, session_id)
 
 
 @st.cache(ttl=3600)
