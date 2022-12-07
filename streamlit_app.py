@@ -1,4 +1,5 @@
 import inspect
+from typing import Optional
 
 import streamlit as st
 
@@ -9,11 +10,11 @@ PAGE_ICON_PATH = "images/aoc-icon.png"
 SIDEBAR_IMAGE_PATH = "images/aoc-balloon.png"
 
 
-def render_page(last_day: int):
+def render_page(last_day: int, selected_day: int = None):
     session_id = secrets.get_session_id()
     days_info = _get_info(last_day, session_id)
 
-    selected_day_number = _select_from_sidebar(days=[d.title for d in days_info])
+    selected_day_number = _select_from_sidebar(days=[d.title for d in days_info], selected=selected_day)
     day_info = days_info[selected_day_number]
 
     st.subheader(f'[{day_info.title[4:-4]}]({day_info.url})' if day_info.title != parse.PARSE_EMPTY else '')
@@ -36,12 +37,22 @@ def _get_input(day: int):
     return reader.get_data() if reader.path_exists() else ""
 
 
-def _select_from_sidebar(days: list):
+def _get_day_from_query(par: dict) -> Optional[int]:
+    if 'day' not in par:
+        return None
+
+    day_str = par['day'][0]
+    day_int = int(day_str) if day_str.isdigit() else None
+    return day_int
+
+
+def _select_from_sidebar(days: list, selected: int):
     with st.sidebar:
         st.image(SIDEBAR_IMAGE_PATH)
         selected_day_number = st.radio(
             label='Select a day',
             options=range(len(days)),
+            index=0 if (not selected) or (selected < 1) or (selected > 25) else selected-1,
             format_func=lambda x: days[x][4:-4] if days[x] != parse.PARSE_EMPTY else days[x]
         )
     return selected_day_number
@@ -103,4 +114,7 @@ st.info(static.annotation)
 st.caption(static.disclaimer)
 st.markdown('----')
 
-render_page(last_day=25)
+params = st.experimental_get_query_params()
+day = _get_day_from_query(params)
+
+render_page(last_day=25, selected_day=day)
