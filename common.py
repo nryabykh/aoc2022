@@ -1,6 +1,7 @@
-from dataclasses import dataclass
-from pathlib import Path
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from importlib import import_module
+from pathlib import Path
 from typing import Any
 
 
@@ -10,13 +11,17 @@ class Reader:
         self.test = is_test
         self.base_dir = Path(__file__).parent
         self.filename = f'{day:02}{"_test" if is_test else ""}.txt'
+        self.path = self.base_dir / 'input' / self.filename
 
     def get_lines(self):
         return self.get_data().splitlines()
 
     def get_data(self):
-        with open(self.base_dir / 'input' / self.filename) as f:
+        with open(self.path) as f:
             return f.read()
+
+    def path_exists(self) -> bool:
+        return self.path.exists()
 
 
 @dataclass
@@ -42,7 +47,7 @@ class BaseSolver(ABC):
         self.day = day
         self.data = {}
 
-    def solve(self, test: bool) -> Answer:
+    def solve(self, test: bool = False) -> Answer:
         self.data['input'] = Reader(day=self.day, is_test=test).get_lines()
         self._prepare()
         one, two = self._solve()
@@ -61,3 +66,7 @@ class BaseSolver(ABC):
     @abstractmethod
     def _solve_two(self):
         ...
+
+
+def get_module(_day: int):
+    return getattr(import_module(f"solutions.day{_day:02}"), 'Solver')
