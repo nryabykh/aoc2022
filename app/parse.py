@@ -2,10 +2,11 @@
 Parses data from https://adventofcode.com/
 """
 
+import time
 from dataclasses import dataclass
+
 import requests
 from bs4 import BeautifulSoup
-import time
 
 PARSE_EMPTY = 'Not Available'
 

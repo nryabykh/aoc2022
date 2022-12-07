@@ -1,7 +1,7 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from importlib import import_module
 from pathlib import Path
-from abc import ABC, abstractmethod
 from typing import Any
 
 

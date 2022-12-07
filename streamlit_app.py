@@ -1,13 +1,16 @@
-import streamlit as st
 import inspect
 
-from app import parse
-from app.secrets import get_session_id
-from common import get_module, Reader
+import streamlit as st
+
+from app import parse, secrets, static
+from common import Reader, get_module
+
+PAGE_ICON_PATH = "images/aoc-icon.png"
+SIDEBAR_IMAGE_PATH = "images/aoc-balloon.png"
 
 
-def run(last_day: int):
-    session_id = get_session_id()
+def render_page(last_day: int):
+    session_id = secrets.get_session_id()
     days_info = _get_info(last_day, session_id)
 
     selected_day_number = _select_from_sidebar(days=[d.title for d in days_info])
@@ -35,7 +38,7 @@ def _get_input(day: int):
 
 def _select_from_sidebar(days: list):
     with st.sidebar:
-        st.image('images/aoc-balloon.png')
+        st.image(SIDEBAR_IMAGE_PATH)
         selected_day_number = st.radio(
             label='Select a day',
             options=range(len(days)),
@@ -64,9 +67,6 @@ def _print_task(texts: list):
 
 
 def _print_input(selected_day: int):
-    caution_text = """Many lines, a lot of scroll, browser
-     slowdown. But you can copy the whole input and reproduce the solution!"""
-
     data = _get_input(selected_day)
     st.markdown('#### My Input')
     if not data:
@@ -76,7 +76,7 @@ def _print_input(selected_day: int):
     show = st.checkbox(
         label='Show input',
         value=False,
-        help=caution_text
+        help=static.input_caution
     )
     if not show:
         return
@@ -97,24 +97,10 @@ def _print_solution(selected_day: int):
     st.code(comment + inspect.getsource(cls))
 
 
-st.set_page_config(page_icon='images/aoc-icon.png', page_title='Aoc22 Solutions', layout='wide')
-st.title('🎄 Advent of Code 2022')
-st.info("""❄️ Advent of Code is an annual set of Christmas-themed computer programming challenges that follow an Advent 
-calendar. 
-
-🥂  Each year, 25 puzzles are created and tested in advance by Eric Wastl, the founder of Advent of Code. They are 
-released on a daily schedule from December 1 to December 25 at midnight EST. Puzzles consist of two parts that must 
-be solved in order, with the second part not revealed to the user until the first part is solved correctly. 
-Participants earn one golden star for each part they finish, giving a possible total of two stars per day and fifty 
-stars per year. 
-
-🎅  Each puzzle contains a fictional backstory that is the same for all participants, but each person receives a 
-different piece of input data and should generate a different correct result.
-
-https://en.wikipedia.org/wiki/Advent_of_Code""")
-
-st.caption("""Below you can find inputs and answers eligible for my AoC account only. For you, there are other 
-    inputs and other answers obviously. So copying and pasting my answers to your puzzles does not make any sense.""")
+st.set_page_config(page_icon=PAGE_ICON_PATH, page_title='Aoc22 Solutions', layout='wide')
+st.title(static.header)
+st.info(static.annotation)
+st.caption(static.disclaimer)
 st.markdown('----')
 
-run(last_day=25)
+render_page(last_day=25)

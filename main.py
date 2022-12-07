@@ -1,4 +1,5 @@
 import argparse
+
 from common import get_module
 
 parser = argparse.ArgumentParser()
