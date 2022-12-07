@@ -7,7 +7,7 @@ from app import parse, secrets, static
 from common import Reader, get_module
 
 PAGE_ICON_PATH = "images/aoc-icon.png"
-SIDEBAR_IMAGE_PATH = "images/aoc-balloon.png"
+SIDEBAR_IMAGE_PATH = "images/aoc-balloon-grey.png"
 
 
 def render_page(last_day: int, selected_day: int = None):
@@ -48,7 +48,8 @@ def _get_day_from_query(par: dict) -> Optional[int]:
 
 def _select_from_sidebar(days: list, selected: int):
     with st.sidebar:
-        st.image(SIDEBAR_IMAGE_PATH)
+        _, col_img, _ = st.columns((1, 4, 1))
+        col_img.image(SIDEBAR_IMAGE_PATH)
         selected_day_number = st.radio(
             label='Select a day',
             options=range(len(days)),
