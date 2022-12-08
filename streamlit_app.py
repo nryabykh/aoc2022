@@ -32,8 +32,8 @@ def _get_info(last_day: int, session_id: str):
 
 
 @st.cache(ttl=3600)
-def _get_input(day: int):
-    reader = Reader(day=day, is_test=False)
+def _get_input(_day: int):
+    reader = Reader(day=_day, is_test=False)
     return reader.get_data() if reader.path_exists() else ""
 
 
