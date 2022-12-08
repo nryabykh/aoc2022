@@ -1,7 +1,10 @@
 """
-
+--- Day 8: Treetop Tree House ---
+https://adventofcode.com/2022/day/8
 """
+
 import itertools
+from functools import reduce
 from typing import Iterable
 
 from common import BaseSolver
@@ -9,54 +12,50 @@ from common import BaseSolver
 
 class Solver(BaseSolver):
     def _prepare(self):
-        pass
+        data = [[int(c) for c in line] for line in self.data['input']]
+        height, width = len(data), len(data[0])
+        observables = {}
+        for i in range(height):
+            row = data[i]
+            for j in range(width):
+                cur = row[j]
+                col = [line[j] for line in data]
+
+                lefts, rights = row[:j], row[(j+1):]
+                tops, bottoms = col[:i], col[(i+1):]
+                observables[(i, j)] = (cur, lefts, rights, tops, bottoms)
+
+        self.data['observables'] = observables
 
     def _solve_one(self):
         visible = 0
-        data = [[int(c) for c in line] for line in self.data['input']]
-        height, width = len(data), len(data[0])
-        for i in range(height):
-            for j in range(width):
-                cur = data[i][j]
-                if i == 0 or j == 0 or i == height-1 or j == width-1:
-                    visible += 1
-                    continue
-                else:
-                    leftmax = max(data[i][:j])
-                    rightmax = max(data[i][(j+1):])
-                    col = [line[j] for line in data]
-                    topmax = max(col[:i])
-                    bottommax = max(col[(i+1):])
-                    if leftmax < cur or rightmax < cur or topmax < cur or bottommax < cur:
-                        visible += 1
-
+        for _, values in self.data['observables'].items():
+            cur, *others = values
+            visible += any(not other or max(other) < cur for other in others)
         return visible
+
+        # == One-liner ==
+        # return sum(
+        #     any(not other or max(other) < cur for other in others)
+        #     for _, (cur, *others)
+        #     in self.data['observables'].items()
+        # )
 
     def _solve_two(self):
         scores = []
-        data = [[int(c) for c in line] for line in self.data['input']]
-        height, width = len(data), len(data[0])
-        for i in range(height):
-            for j in range(width):
-                cur = data[i][j]
-                if i == 0 or j == 0 or i == height-1 or j == width-1:
-                    scores.append(0)
-                    continue
-                else:
-                    lefts, rights = data[i][:j], data[i][(j+1):]
-                    col = [line[j] for line in data]
-                    tops, bottoms = col[:i], col[(i+1):]
-                    scores.append(
-                        self._get_product(
-                            (
-                                self._get_distance(cur, lefts, reverse=True),
-                                self._get_distance(cur, rights),
-                                self._get_distance(cur, tops, reverse=True),
-                                self._get_distance(cur, bottoms)
-                            )
-                        )
-                    )
+        for _, values in self.data['observables'].items():
+            cur, *others = values
+            distances = [self._get_distance(cur, other, i % 2 == 0) for i, other in enumerate(others)]
+            scores.append(self._get_product(distances))
         return max(scores)
+
+        # == One-liner ==
+        # return max(
+        #     self._get_product(
+        #         self._get_distance(cur, other, i % 2 == 0) for i, other in enumerate(others))
+        #     for _, (cur, *others)
+        #     in self.data['observables'].items()
+        # )
 
     @staticmethod
     def _get_distance(cur: int, others: list[int], reverse: bool = False):
@@ -67,7 +66,4 @@ class Solver(BaseSolver):
 
     @staticmethod
     def _get_product(items: Iterable[int]):
-        res = 1
-        for i in items:
-            res = res * i
-        return res
+        return reduce(lambda x, y: x*y, items)
