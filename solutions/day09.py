@@ -21,28 +21,26 @@ class Solver(BaseSolver):
         }
 
     def _solve_one(self):
-        xh, yh, xt, yt = 0, 0, 0, 0
-        t_fields = {(0, 0)}
-
-        for d in self.data['moves']:
-            xh, yh = self.data['steps'][d](xh, yh)
-            xt, yt = self._move_tail(xh, yh, xt, yt)
-            t_fields.add((xt, yt))
-
-        return len(t_fields)
+        return len(self._get_tail_fields(rope_length=2))
 
     def _solve_two(self):
-        rope_length = 10
+        return len(self._get_tail_fields(rope_length=10))
+
+    def _get_tail_fields(self, rope_length: int):
         xy = [(0, 0) for _ in range(rope_length)]
         t_fields = {(0, 0)}
 
         for d in self.data['moves']:
-            xy[0] = self.data['steps'][d](*xy[0])
-            for i in range(1, rope_length):
-                xy[i] = self._move_tail(*xy[i - 1], *xy[i])
+            xy = self._move_rope(d, xy, rope_length)
             t_fields.add(xy[-1])
 
-        return len(t_fields)
+        return t_fields
+
+    def _move_rope(self, direction: str, xy: list, rope_length: int):
+        xy[0] = self.data['steps'][direction](*xy[0])
+        for i in range(1, rope_length):
+            xy[i] = self._move_tail(*xy[i - 1], *xy[i])
+        return xy
 
     @staticmethod
     def _move_tail(xh, yh, xt, yt) -> tuple[int, int]:
