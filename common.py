@@ -6,12 +6,12 @@ from typing import Any
 
 
 class Reader:
-    def __init__(self, day: int, is_test: bool):
+    def __init__(self, day: int, is_test: bool, input_path: str = None):
         self.day = day
         self.test = is_test
         self.base_dir = Path(__file__).parent
         self.filename = f'{day:02}{"_test" if is_test else ""}.txt'
-        self.path = self.base_dir / 'input' / self.filename
+        self.path = (self.base_dir / 'input' / self.filename) if (input_path is None) else Path(input_path)
 
     def get_lines(self):
         return self.get_data().splitlines()
@@ -47,8 +47,8 @@ class BaseSolver(ABC):
         self.day = day
         self.data = {}
 
-    def solve(self, test: bool = False) -> Answer:
-        self.data['input'] = Reader(day=self.day, is_test=test).get_lines()
+    def solve(self, input_path: str = None, test: bool = False) -> Answer:
+        self.data['input'] = Reader(day=self.day, is_test=test, input_path=input_path).get_lines()
         self._prepare()
         one, two = self._solve()
         return Answer(self.day, one, two)

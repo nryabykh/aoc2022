@@ -12,24 +12,22 @@ My solutions of [Advent of Code 2022](https://adventofcode.com/2022).
 - Inputs: `./input`
 - Code: `./solutions`
 
+## Usage
+
+`Main.py` reads input from `./input/<day>.txt` file by default. You can specify a custom input file with `-i`.
+
 ```bash
-usage: main.py [-h] [-d DAY] [-t]
+usage: main.py [-h] [-d DAY] [-i INPUT] [-t]
 
 options:
-  -h, --help         show this help message and exit
-  -d DAY, --day DAY  Number of day (from 1 to 25)
-  -t, --test         Use test data
+  -h, --help            show this help message and exit
+  -d DAY, --day DAY     Number of day (from 1 to 25)
+  -i INPUT, --input INPUT
+                        Relative path to custom input file
+  -t, --test            Use test data
 
-example: python3 main.py -d 6 -t
-```
 
-Or run Streamlit app which represents answers and solutions without explicit run:
-```
-chmod +x start.sh
-./start.sh
-
-or
-
-. venv/bin/activate
-streamlit run streamlit_app.py
+example: 
+python3 main.py -d 6
+python3 main.py -d 9 -i ./path/to/input/file.txt
 ```
