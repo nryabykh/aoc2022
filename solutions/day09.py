@@ -5,6 +5,8 @@ https://adventofcode.com/2022/day/9
 
 from common import BaseSolver
 
+Coord = tuple[int, int]
+
 
 class Solver(BaseSolver):
     def _prepare(self):
@@ -26,7 +28,7 @@ class Solver(BaseSolver):
     def _solve_two(self):
         return len(self._get_tail_fields(rope_length=10))
 
-    def _get_tail_fields(self, rope_length: int):
+    def _get_tail_fields(self, rope_length: int) -> set[Coord]:
         xy = [(0, 0) for _ in range(rope_length)]
         t_fields = {(0, 0)}
 
@@ -36,14 +38,14 @@ class Solver(BaseSolver):
 
         return t_fields
 
-    def _move_rope(self, direction: str, xy: list, rope_length: int):
+    def _move_rope(self, direction: str, xy: list[Coord], rope_length: int) -> list[Coord]:
         xy[0] = self.data['steps'][direction](*xy[0])
         for i in range(1, rope_length):
             xy[i] = self._move_tail(*xy[i - 1], *xy[i])
         return xy
 
     @staticmethod
-    def _move_tail(xh, yh, xt, yt) -> tuple[int, int]:
+    def _move_tail(xh, yh, xt, yt) -> Coord:
         if abs(xh - xt) <= 1 and abs(yh - yt) <= 1:
             pass
         elif xh == xt:
