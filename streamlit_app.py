@@ -3,7 +3,7 @@ from typing import Optional
 
 import streamlit as st
 
-from app import parse, secrets, static
+from app import parse, secrets, static, badges
 from common import Reader, get_module
 
 PAGE_ICON_PATH = "images/aoc-icon.png"
@@ -109,6 +109,13 @@ def _print_solution(selected_day: int):
     st.code(comment + inspect.getsource(cls))
 
 
+def add_badges_to_sidebar(*bs):
+    all_badges: dict = badges.badges
+    for i in range(0, len(bs), 2):
+        line = all_badges[bs[i]].url + all_badges[bs[i + 1]].url
+        st.sidebar.markdown(line)
+
+
 st.set_page_config(page_icon=PAGE_ICON_PATH, page_title='Aoc22 Solutions', layout='wide')
 st.title(static.header)
 st.info(static.annotation)
@@ -119,3 +126,4 @@ params = st.experimental_get_query_params()
 day = _get_day_from_query(params)
 
 render_page(last_day=25, selected_day=day)
+add_badges_to_sidebar('linkedin', 'github')
