@@ -37,14 +37,14 @@ class Solver(BaseSolver):
         self.data['end'] = end
 
     @staticmethod
-    def _check_one_higher(current: str, neighbour: str):
+    def _check_one_higher(current: str, neighbour: str) -> bool:
         return ord(neighbour) - ord(current) <= 1
 
     @staticmethod
-    def _check_one_lower(current: str, neighbour: str):
+    def _check_one_lower(current: str, neighbour: str) -> bool:
         return ord(current) - ord(neighbour) <= 1
 
-    def _find_distances(self, start: Coord, check_func: Callable[..., bool]):
+    def _find_distances(self, start: Coord, check_func: Callable[..., bool]) -> dict[Coord, int]:
         """
         Dijkstra's algorithm for finding the shortest paths from start to any other point.
         """
