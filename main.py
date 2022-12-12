@@ -6,12 +6,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--day', type=int, help='Number of day (from 1 to 25)')
 parser.add_argument('-i', '--input', type=str, help='Relative path to custom input file')
 parser.add_argument('-t', '--test', action='store_true', help='Use test data')
+parser.add_argument('-p', '--part', type=int, help='Part to solve only')
 
 
-def main(_day: int, _test: bool, _file: str):
+def main(_day: int, _test: bool, _file: str, _part: int):
     cls = get_module(_day)
     print(
-        cls(_day).solve(_file, _test)
+        cls(_day).solve(_file, _test, _part)
     )
 
 
@@ -21,4 +22,4 @@ if __name__ == "__main__":
         print('No day specified, run the 1st day puzzle as example...')
 
     day = args.day if args.day is not None else 1
-    main(day, args.test, args.input)
+    main(day, args.test, args.input, args.part)

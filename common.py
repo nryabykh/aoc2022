@@ -47,17 +47,19 @@ class BaseSolver(ABC):
         self.day = day
         self.data = {}
 
-    def solve(self, input_path: str = None, test: bool = False) -> Answer:
+    def solve(self, input_path: str = None, test: bool = False, part: int = None) -> Answer:
         self.data['input'] = Reader(day=self.day, is_test=test, input_path=input_path).get_lines()
         self._prepare()
-        one, two = self._solve()
+        one, two = self._solve(part)
         return Answer(self.day, one, two)
 
     def _prepare(self):
         pass
 
-    def _solve(self):
-        return self._solve_one(), self._solve_two()
+    def _solve(self, part: int):
+        ans_one = self._solve_one() if part == 1 or part is None else None
+        ans_two = self._solve_two() if part == 2 or part is None else None
+        return ans_one, ans_two
 
     @abstractmethod
     def _solve_one(self):
