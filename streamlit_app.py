@@ -1,4 +1,4 @@
-import inspect
+import os
 from typing import Optional
 
 import streamlit as st
@@ -99,14 +99,15 @@ def _print_input(selected_day: int):
 
 def _print_solution(selected_day: int):
     st.markdown('#### Solution')
-    try:
-        cls = get_module(selected_day)
-    except ModuleNotFoundError as _:
+    solution_path = f'./solutions/day{selected_day:02}.py'
+    if not os.path.exists(solution_path):
         st.warning('No solution provided yet')
         return
 
-    comment = """# Input lines stored in self.data['input']\n\n"""
-    st.code(comment + inspect.getsource(cls))
+    with open(solution_path) as f:
+        source = f.read()
+
+    st.code(source)
 
 
 def add_badges_to_sidebar(*bs):
