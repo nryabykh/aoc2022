@@ -48,7 +48,9 @@ class BaseSolver(ABC):
         self.data = {}
 
     def solve(self, input_path: str = None, test: bool = False, part: int = None) -> Answer:
-        self.data['input'] = Reader(day=self.day, is_test=test, input_path=input_path).get_lines()
+        reader = Reader(day=self.day, is_test=test, input_path=input_path)
+        self.data['input'] = reader.get_lines()
+        self.data['raw'] = reader.get_data()
         self._prepare()
         one, two = self._solve(part)
         return Answer(self.day, one, two)
