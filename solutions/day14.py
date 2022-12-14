@@ -45,7 +45,6 @@ class Solver(BaseSolver):
     def _solve_two(self):
         walls = self.data['walls'].copy()
         my = max(y for x, y in walls) + 2
-
         for x in range(500 - my - 10, 500 + my + 10):
             walls.add((x, my))
 
@@ -53,7 +52,7 @@ class Solver(BaseSolver):
         x_sand, y_sand = 500, 0
         while True:
             x_new, y_new = self._get_next(x_sand, y_sand, walls)
-            if x_sand == x_new and y_sand == y_new:
+            if (x_new, y_new) == (x_sand, y_sand):
                 walls.add((x_sand, y_sand))
                 sands += 1
                 if x_sand == 500 and y_sand == 0:
@@ -66,10 +65,5 @@ class Solver(BaseSolver):
 
     @staticmethod
     def _get_next(x, y, walls) -> tuple[int, int]:
-        if (x, y + 1) not in walls:
-            return x, y + 1
-        if (x - 1, y + 1) not in walls:
-            return x - 1, y + 1
-        if (x + 1, y + 1) not in walls:
-            return x + 1, y + 1
-        return x, y
+        variants = [(x, y + 1), (x - 1, y + 1), (x + 1, y + 1), (x, y)]
+        return [v for v in variants if v not in walls].pop(0)
