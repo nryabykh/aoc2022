@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from importlib import import_module
@@ -49,6 +50,7 @@ class BaseSolver(ABC):
 
     def solve(self, input_path: str = None, test: bool = False, part: int = None) -> Answer:
         reader = Reader(day=self.day, is_test=test, input_path=input_path)
+        self.data['is_test'] = test
         self.data['input'] = reader.get_lines()
         self.data['raw'] = reader.get_data()
         self._prepare()
@@ -59,8 +61,12 @@ class BaseSolver(ABC):
         pass
 
     def _solve(self, part: int):
+        start_time = time.time()
         ans_one = self._solve_one() if part == 1 or part is None else None
+        first_time = time.time()
+        print(f' --- Elapsed time for part one = {first_time - start_time:.2f}s ---')
         ans_two = self._solve_two() if part == 2 or part is None else None
+        print(f' --- Elapsed time for part two = {time.time() - first_time:.2f}s ---')
         return ans_one, ans_two
 
     @abstractmethod
