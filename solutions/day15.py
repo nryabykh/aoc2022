@@ -1,6 +1,8 @@
 """
-
+--- Day 15: Beacon Exclusion Zone ---
+https://adventofcode.com/2022/day/15
 """
+
 import re
 from dataclasses import dataclass
 
@@ -45,13 +47,6 @@ class Solver(BaseSolver):
         sensors = set((s.x, s.y) for s in self.data['sensors'])
         beacons = set((s.xb, s.yb) for s in self.data['sensors'])
         for s in self.data['sensors']:
-            # === 85 374 373 171 856 iterations - so slow ===
-            # for x in range(s.x - s.distance, s.x + s.distance + 1):
-            #     for y in range(s.y - s.distance, s.y + s.distance + 1):
-            #         if s.get_distance(x, y) <= s.distance:
-            #             if (x, y) not in sensors and (x, y) not in beacons:
-            #                 checked.add((x, y))
-
             if (y_target < s.y - s.distance) or (y_target > s.y + s.distance):
                 continue
             dist_to_target = abs(s.y - y_target)
@@ -67,9 +62,13 @@ class Solver(BaseSolver):
         x_min, x_max = min_coord, max_coord
         y_min, y_max = min_coord, max_coord
         for s in self.data['sensors']:
-            for x in range(max(x_min, s.x - s.distance - 1), min(x_max, s.x + s.distance + 2)):
+            distance_and_1 = s.distance + 1
+            for x in range(
+                    max(x_min, s.x - distance_and_1),
+                    min(x_max, s.x + distance_and_1 + 1)
+            ):
                 dx = abs(s.x - x)
-                dy = s.distance + 1 - dx
+                dy = distance_and_1 - dx
                 for y in (s.y - dy, s.y + dy):
                     if (y_min <= y <= y_max) and not self._is_under_sensor(x, y, exclude_sensor=s):
                         return x*4000000 + y
