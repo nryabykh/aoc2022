@@ -70,7 +70,10 @@ class Solver(BaseSolver):
                 dx = abs(s.x - x)
                 dy = distance_and_1 - dx
                 for y in (s.y - dy, s.y + dy):
-                    if (y_min <= y <= y_max) and not self._is_under_sensor(x, y, exclude_sensor=s):
+                    if (
+                            (y_min <= y <= y_max) and
+                            not self._is_under_sensor(x, y, exclude_sensor=s)
+                    ):
                         return x*4000000 + y
 
     def _is_under_sensor(self, x: int, y: int, exclude_sensor: Sensor):
