@@ -28,7 +28,7 @@ class Solver(BaseSolver):
             coords = [(x + 2, y + max_y + 4) for (x, y) in self.data['figures'][fig]]
             # print(f'{fig=} init {coords=}')
             collision = False
-            moves_cnt, fig_jets = 0, ""
+            fig_jets = ""
             while not collision:
                 jet = jets[tick % len(jets)]
                 # print(jet)
@@ -37,7 +37,6 @@ class Solver(BaseSolver):
                 collision, coords = self._move_down(coords, rocks)
                 # print(fig, coords)
                 tick += 1
-                moves_cnt += 1
                 fig_jets += jet
             for c in coords:
                 rocks.add(c)
@@ -46,7 +45,7 @@ class Solver(BaseSolver):
             max_y = max(max_y, max(y for x, y in coords))
             # print(rock_cnt, max_y)
             max_row_len = sum(1 for (x, y) in rocks if y == max_y)
-            moves.append((fig, fig_jets, moves_cnt, max_row_len, max_y))
+            moves.append((fig, fig_jets, max_row_len, max_y))
 
         for m in moves:
             print(m)
@@ -78,3 +77,6 @@ class Solver(BaseSolver):
         figures = list(self.data['figures'].keys())
         jets = self.data['input'][0]
         print(len(jets))
+
+
+        # dH = max(0, y[fig] - (len(jet) - 4))
