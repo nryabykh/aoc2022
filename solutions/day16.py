@@ -150,25 +150,116 @@ class Solver(BaseSolver):
 
     def _solve_two(self):
         current = 'AA'
-        time_left = 26
-        opened = set()
+        time_left = 30
+        opened = {'AA': 0}
+        score = 0
 
-        opened.add('DD')
+        from collections import deque
 
-        res = sorted(
-            self._single_step(current, time_left, opened, depth=8),
-            reverse=True
-        )
-        print(res[0])
-        # prev_score, score, depth = None, 0, 1
-        # while score != prev_score:
-        #     prev_score = score
-        #     res = sorted(
-        #         self._single_step_we(current, time_left, opened, depth=depth),
-        #         reverse=True
-        #     )
-        #     print(f'{depth=}, {score=}')
-        #     score, *_ = res[0]
-        #     depth += 1
-        score, *_ = res[0]
-        return score
+        queue_first = deque()
+        queue_first.append((current, opened, time_left, score, 'AA'))  # time left after valve opening; score if no nothing till the end
+
+        queue_second = deque()
+        queue_second.append((current, opened, time_left, score, 'AA'))
+
+        max_score = 0
+        max_path = ('', '')
+        paths_first = set()
+        paths_second = set()
+
+
+        # while queue_first or queue_second:
+        #     opened1, opened2 = {}, {}
+        #     if queue_first:
+        #         v1, opened1, time_left1, score1, path1 = queue_first.pop()
+        #     if queue_second:
+        #         v2, opened2, time_left2, score2, path2 = queue_second.pop()
+        #
+        #     opened = {**opened1, **opened2}
+        #
+        #     if opened1:
+        #         first_steps = self._get_next_steps(v1, opened, time_left1, score1, path1)
+        #
+        #     if opened
+        #
+        #     second_steps =
+
+
+
+
+
+        print(max_score, max_path)
+
+    def _get_next_steps(self, valve, opened, time_left, score, path):
+        steps = []
+        for next_v in self.data['valves_nonzero']:
+            if next_v in opened:
+                continue
+
+            distance = self.data['distances'][valve][next_v]
+            new_time_left = time_left - (distance + 1)
+            if new_time_left <= 0:
+                continue
+
+            new_score = score + new_time_left * self.data['valves'][next_v].rate
+            new_path = path + ' -> ' + next_v
+            steps.append((
+                next_v,
+                {**opened, next_v: opened[valve] + distance + 1},
+                new_time_left,
+                new_score,
+                new_path
+            ))
+            # path.add((new_score, new_path))
+        return steps
+
+    def _solve_queue(self):
+        current = 'AA'
+        time_left = 30
+        opened = {'AA': 0}
+        score = 0
+
+        from collections import deque
+
+        queue = deque()
+        queue.append((current, opened, time_left, score, 'AA'))  # time left after valve opening; score if no nothing till the end
+
+        max_score = 0
+        max_path = ''
+
+        while queue:
+            current_v, opened, time_left, score, path = queue.pop()
+
+            min_d, max_rate, cnt = sys.maxsize, 0, 0
+            for next_v in self.data['valves_nonzero']:
+                if next_v not in opened:
+                    min_d = min(min_d, self.data['distances'][current_v][next_v])
+                    max_rate = max(max_rate, self.data['valves'][next_v].rate)
+                    cnt += 1
+            if max_rate > 0 and score + (time_left - min_d - 1) * max_rate * cnt < max_score:
+                continue
+
+            for next_v in self.data['valves_nonzero']:
+                if next_v in opened:
+                    continue
+
+                distance = self.data['distances'][current_v][next_v]
+                new_time_left = time_left - (distance + 1)
+                if new_time_left <= 0:
+                    continue
+
+                new_score = score + new_time_left * self.data['valves'][next_v].rate
+                new_path = path + ' -> ' + next_v
+                queue.append((
+                    next_v,
+                    {**opened, next_v: opened[current_v] + distance + 1},
+                    new_time_left,
+                    new_score,
+                    new_path
+                ))
+                if new_score > max_score:
+                    max_score = new_score
+                    max_path = new_path
+
+        print(max_score, max_path)
+        return max_score
