@@ -1,8 +1,7 @@
 """
-
+--- Day 17: Pyroclastic Flow ---
+https://adventofcode.com/2022/day/17
 """
-import sys
-import time
 
 from common import BaseSolver
 
@@ -19,27 +18,30 @@ class Solver(BaseSolver):
             'o': [(0, 0), (1, 0), (0, 1), (1, 1)]
         }
 
+    def _move_till_rest(self, tick: int, coords, rocks):
+        jets = self.data['input'][0]
+        collision = False
+
+        while not collision:
+            jet = jets[tick % len(jets)]
+
+            coords = self._move_jet(coords, jet, rocks)
+            collision, coords = self._move_down(coords, rocks)
+            tick += 1
+
+        return tick, coords
+
     def _solve_one(self):
         rocks_number = 2022
         figures = list(self.data['figures'].keys())
-        jets = self.data['input'][0]
 
         rock_cnt, tick, max_y = 0, 0, 0
         rocks = set()
         while rock_cnt < rocks_number:
             fig = figures[rock_cnt % 5]
             coords = [(x + 2, y + max_y + 4) for (x, y) in self.data['figures'][fig]]
-            collision = False
-            fig_jets = ""
 
-            while not collision:
-                jet = jets[tick % len(jets)]
-
-                coords = self._move_jet(coords, jet, rocks)
-                collision, coords = self._move_down(coords, rocks)
-                tick += 1
-                fig_jets += jet
-
+            tick, coords = self._move_till_rest(tick, coords, rocks)
             for c in coords:
                 rocks.add(c)
 
@@ -69,28 +71,13 @@ class Solver(BaseSolver):
                 return True, coords
         return False, new_coords
 
-    def _get_lines(self, coords: set) -> dict:
-        lines = {}
-        for x, y in coords:
-            if y in lines:
-                lines[y].append(x)
-            else:
-                lines[y] = [x]
-        for y in lines:
-            lines[y] = sorted(lines[y])
-        return lines
+    @staticmethod
+    def get_snapshot(lines: int, rocks: set):
+        max_y = max(y for _, y in rocks) if rocks else 0
+        lower = 0 if max_y <= lines else max_y - lines
 
-    def _check_pattern(self, lines, n=4):
-        y = max(lines.keys())
-        keys = list(lines.keys())
-        checked_pattern = [lines[k] for k in keys[-n:]]
-        start_ix = -1
-        for k in keys[:-n]:
-            res = all(lines[k + i] == check_line for i, check_line in enumerate(checked_pattern))
-            if res:
-                start_ix = k
-
-        return start_ix
+        return '\n'.join(
+            (''.join('#' if (j, i) in rocks else '.' for j in range(WIDE))) for i in range(max_y, lower, -1))
 
     def _solve_two(self):
         rocks_number = 1000000000000
@@ -98,14 +85,15 @@ class Solver(BaseSolver):
         jets = self.data['input'][0]
 
         rock_cnt, tick, max_y = 0, 0, 0
-        rocks = set()
-        start_conditions = {}
-        pattern_detected = False
+        rocks, start_conditions, pattern_detected = set(), {}, False
+        snapshot_lines = 7
+
         while rock_cnt < rocks_number:
             fig = figures[rock_cnt % 5]
 
-            if not pattern_detected and (fig, tick % len(jets)) in start_conditions:
-                height_before_pattern, figs_before_pattern = start_conditions[(fig, tick % len(jets))]
+            csn = self.get_snapshot(snapshot_lines, rocks)
+            if not pattern_detected and (fig, tick % len(jets), csn) in start_conditions:
+                height_before_pattern, figs_before_pattern = start_conditions[(fig, tick % len(jets), csn)]
                 pattern_height = max_y - height_before_pattern
                 pattern_figs = rock_cnt - figs_before_pattern
                 number_of_copies = (rocks_number - figs_before_pattern) // pattern_figs
@@ -116,25 +104,15 @@ class Solver(BaseSolver):
                 pattern_detected = True
                 rocks = new_rocks
                 max_y = max(max_y, max(y for x, y in rocks))
-                print(f'{height_before_pattern=}, {pattern_height=}, {pattern_figs=}, {number_of_copies=}, {rock_cnt=}')
-                print(f'{fig}, {figures[rock_cnt % 5]}')
+                print(f'{height_before_pattern=}, {figs_before_pattern=}, {pattern_height=}, {pattern_figs=}, {number_of_copies=}, {rock_cnt=}, {fig=}')
 
             if rock_cnt == rocks_number:
                 break
 
             coords = [(x + 2, y + max_y + 4) for (x, y) in self.data['figures'][fig]]
-            collision = False
-            fig_jets = ""
+            start_conditions[(fig, tick % len(jets), self.get_snapshot(snapshot_lines, rocks))] = (max_y, rock_cnt)
 
-            start_conditions[(fig, tick % len(jets))] = (max_y, rock_cnt)
-            while not collision:
-                jet = jets[tick % len(jets)]
-
-                coords = self._move_jet(coords, jet, rocks)
-                collision, coords = self._move_down(coords, rocks)
-                tick += 1
-                fig_jets += jet
-
+            tick, coords = self._move_till_rest(tick, coords, rocks)
             for c in coords:
                 rocks.add(c)
 
