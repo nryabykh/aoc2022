@@ -1,6 +1,6 @@
 # Advent of Code '22
 
-![](https://img.shields.io/badge/day%20📅-23-blue) ![](https://img.shields.io/badge/stars%20⭐-42-yellow) ![](https://img.shields.io/badge/days%20completed-19-red) [![Update AoC Badges](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml/badge.svg)](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml)
+![](https://img.shields.io/badge/day%20📅-24-blue) ![](https://img.shields.io/badge/stars%20⭐-44-yellow) ![](https://img.shields.io/badge/days%20completed-21-red) [![Update AoC Badges](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml/badge.svg)](https://github.com/nryabykh/aoc2022/actions/workflows/main.yml)
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://aoc2022-nriabykh.streamlit.app/)
 
