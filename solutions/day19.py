@@ -29,19 +29,120 @@ class Solver(BaseSolver):
         for line in self.data['input']:
             costs = {}
             ore = re.findall(re_ore, line)
-            costs['ore'] = dict(ore=int(ore[0]), clay=0, obsidian=0)
+            costs['ore'] = dict(ore=int(ore[0]), clay=0, obsidian=0, geode=0)
             clay = re.findall(re_clay, line)
-            costs['clay'] = dict(ore=int(clay[0]), clay=0, obsidian=0)
+            costs['clay'] = dict(ore=int(clay[0]), clay=0, obsidian=0, geode=0)
             ob_ore, ob_clay = re.findall(re_obsidian, line)[0]
-            costs['obsidian'] = dict(ore=int(ob_ore), clay=int(ob_clay), obsidian=0)
+            costs['obsidian'] = dict(ore=int(ob_ore), clay=int(ob_clay), obsidian=0, geode=0)
             g_ore, g_obs = re.findall(re_geode, line)[0]
-            costs['geode'] = dict(ore=int(g_ore), clay=0, obsidian=int(g_obs))
+            costs['geode'] = dict(ore=int(g_ore), clay=0, obsidian=int(g_obs), geode=0)
 
             all_costs.append(costs)
 
         self.data['costs'] = all_costs
 
+
     def _solve_one(self):
+        keys = ['ore', 'clay', 'obsidian', 'geode']
+        cost = self.data['costs'][0]
+        cost_list = []
+        for robot, v in cost.items():
+            cost_list.append(list(v.values()))
+
+        print(cost_list)
+
+        # print(costs[0])
+
+        queue = deque()
+        time_left = 24
+        robots = [1, 0, 0, 0]
+        resources = [0, 0, 0, 0]
+        actions = []  # (action, action_time)
+        score = 0
+        max_score = 0
+        max_costs = [max(c[i] for c in cost_list)for i in (0, 1, 2, 3)]
+        print(max_costs)
+
+        queue.append((time_left, robots, resources, actions, score))
+
+        while queue:
+            # state at the beginning of step
+            state = queue.pop()
+            print(f'handle queue item {state=}')
+            time_left, robots, resources, actions, score = state
+
+            if time_left <= 0:
+                max_score = max(score, max_score)
+                continue
+
+            # do nothing
+            resources = [resources[i] + robots[i] * time_left for i in (0, 1, 2, 3)]
+            score = resources[-1]
+            queue.append(
+                (0, robots, resources, actions + [('stay', time_left)], score)
+            )
+
+            # select robot to build
+            for i in (0, 1, 2, 3):
+                # continue if number of robots >= max costs of this resource
+                if i != 3 and robots[i] >= max_costs[i]:
+                    continue
+
+                # check all resources
+                time_to_farm = []
+                print(f'{cost_list[i]=}')
+                for j in (0, 1, 2):
+                    if cost_list[i][j] == 0:
+                        time_to_farm.append(0)
+                        continue
+
+                    if robots[j] == 0:
+                        time_to_farm.append(-1)
+                        continue
+
+                    time_to_farm.append(
+                        max(
+                            0,
+                            math.ceil((cost_list[i][j] - resources[j]) / robots[j])
+                        )
+                    )
+
+                if -1 in time_to_farm:
+                    continue
+
+                time_to_farm = max(time_to_farm)
+                print(f'robot {i=}, {time_to_farm=}')
+
+                new_resources = [r + robots[k] - cost_list[i][k] for k, r in enumerate(resources)]
+                queue.append(
+                    (
+                        time_left - time_to_farm - 1,
+                        [r + 1 if k == i else r for k, r in enumerate(robots)],
+                        new_resources,
+                        actions + [(keys[i], time_left)],
+                        new_resources[-1]
+                    )
+                )
+                print(f'append {queue[-1]}')
+        return max_score
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def _solve_one_prev(self):
 
         actions = ['ore', 'clay', 'obsidian', 'geode'][::-1]
 
