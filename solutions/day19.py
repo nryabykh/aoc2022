@@ -41,92 +41,212 @@ class Solver(BaseSolver):
 
         self.data['costs'] = all_costs
 
-
     def _solve_one(self):
         keys = ['ore', 'clay', 'obsidian', 'geode']
-        cost = self.data['costs'][0]
-        cost_list = []
-        for robot, v in cost.items():
-            cost_list.append(list(v.values()))
 
-        print(cost_list)
+        quantity_level = 0
+        for bp, cost in enumerate(self.data['costs'], start=1):
+            cost_list = []
+            for robot, v in cost.items():
+                cost_list.append(list(v.values()))
 
-        # print(costs[0])
+            queue = deque()
+            time_left = 24
+            robots = [1, 0, 0, 0]
+            resources = [0, 0, 0, 0]
+            actions = []  # (action, action_time)
+            score = 0
+            max_score = 0
+            best_path = []
+            max_costs = [max(c[i] for c in cost_list)for i in (0, 1, 2, 3)]
 
-        queue = deque()
-        time_left = 24
-        robots = [1, 0, 0, 0]
-        resources = [0, 0, 0, 0]
-        actions = []  # (action, action_time)
-        score = 0
-        max_score = 0
-        max_costs = [max(c[i] for c in cost_list)for i in (0, 1, 2, 3)]
-        print(max_costs)
+            queue.append((time_left, robots, resources, actions, score))
 
-        queue.append((time_left, robots, resources, actions, score))
+            moves = 0
+            # while queue and moves < 20:
+            while queue:
+                moves += 1
+                # state at the beginning of step
+                state = queue.pop()
+                time_left, robots, resources, actions, score = state
+                # print(f'handle queue item {state=}')
 
-        while queue:
-            # state at the beginning of step
-            state = queue.pop()
-            print(f'handle queue item {state=}')
-            time_left, robots, resources, actions, score = state
-
-            if time_left <= 0:
-                max_score = max(score, max_score)
-                continue
-
-            # do nothing
-            resources = [resources[i] + robots[i] * time_left for i in (0, 1, 2, 3)]
-            score = resources[-1]
-            queue.append(
-                (0, robots, resources, actions + [('stay', time_left)], score)
-            )
-
-            # select robot to build
-            for i in (0, 1, 2, 3):
-                # continue if number of robots >= max costs of this resource
-                if i != 3 and robots[i] >= max_costs[i]:
+                if time_left <= 0:
+                    if score > max_score:
+                        max_score = score
+                        best_path = actions
                     continue
 
-                # check all resources
-                time_to_farm = []
-                print(f'{cost_list[i]=}')
-                for j in (0, 1, 2):
-                    if cost_list[i][j] == 0:
-                        time_to_farm.append(0)
+                if robots[-1] == 0:
+                    potential_g = (time_left - 1) * time_left // 2
+                    if potential_g <= max_score:
                         continue
 
-                    if robots[j] == 0:
-                        time_to_farm.append(-1)
+                # do nothing
+                new_resources = [resources[i] + robots[i] * time_left for i in (0, 1, 2, 3)]
+                score = new_resources[-1]
+                queue.append(
+                    (0, robots, new_resources, actions + [('stay', time_left)], score)
+                )
+
+                # select robot to build
+                for i in (0, 1, 2, 3):
+                    # continue if number of robots >= max costs of this resource
+                    if i != 3 and robots[i] >= max_costs[i]:
                         continue
 
-                    time_to_farm.append(
-                        max(
-                            0,
-                            math.ceil((cost_list[i][j] - resources[j]) / robots[j])
+                    # check all resources
+                    time_to_farm = []
+                    for j in (0, 1, 2):
+                        if cost_list[i][j] == 0:
+                            time_to_farm.append(0)
+                            continue
+
+                        if robots[j] == 0:
+                            time_to_farm.append(-1)
+                            continue
+
+                        time_to_farm.append(
+                            max(
+                                0,
+                                math.ceil((cost_list[i][j] - resources[j]) / robots[j])
+                            )
+                        )
+
+                    # print(f'robot {i=}, {cost_list[i]=}, {time_to_farm=}')
+                    if -1 in time_to_farm:
+                        continue
+
+                    time_to_farm = max(time_to_farm)
+                    if time_left < time_to_farm + 1:
+                        continue
+
+                    new_resources = [r + robots[k] * (time_to_farm + 1) - cost_list[i][k] for k, r in enumerate(resources)]
+                    queue.append(
+                        (
+                            time_left - time_to_farm - 1,
+                            [r + 1 if k == i else r for k, r in enumerate(robots)],
+                            new_resources,
+                            actions + [(keys[i], 24 - (time_left - time_to_farm) + 1)],
+                            new_resources[-1]
                         )
                     )
+                    # print(f'append {queue[-1]}')
 
-                if -1 in time_to_farm:
+            print(bp, max_score, best_path)
+            quantity_level += bp * max_score
+        return quantity_level
+
+    def _solve_two(self):
+        keys = ['ore', 'clay', 'obsidian', 'geode']
+
+        quantity_level = 1
+        init_time = 32
+        for bp, cost in enumerate(self.data['costs'][:3], start=1):
+            cost_list = []
+            for robot, v in cost.items():
+                cost_list.append(list(v.values()))
+
+            queue = deque()
+            time_left = init_time
+            robots = [1, 0, 0, 0]
+            resources = [0, 0, 0, 0]
+            actions = []  # (action, action_time)
+            score = 0
+            max_score = 0
+            best_path = []
+            max_costs = [max(c[i] for c in cost_list)for i in (0, 1, 2, 3)]
+
+            queue.append((time_left, robots, resources, actions, score))
+
+            moves = 0
+            # while queue and moves < 20:
+            while queue:
+                moves += 1
+                # state at the beginning of step
+                state = queue.pop()
+                time_left, robots, resources, actions, score = state
+                # print(f'handle queue item {state=}')
+
+                if time_left <= 0:
+                    if score > max_score:
+                        max_score = score
+                        best_path = actions
                     continue
 
-                time_to_farm = max(time_to_farm)
-                print(f'robot {i=}, {time_to_farm=}')
+                if robots[-1] == 0:
+                    potential_g = (time_left - 1) * time_left // 2
+                    if potential_g <= max_score:
+                        continue
 
-                new_resources = [r + robots[k] - cost_list[i][k] for k, r in enumerate(resources)]
+                if robots[2] == 0:
+                    tg = math.ceil((1 + math.sqrt(8 * cost_list[3][2])) / 2)
+                    potential_g = (time_left - tg - 1) * (time_left - tg) // 2
+                    if potential_g <= max_score:
+                        continue
+
+                # do nothing
+                new_resources = [resources[i] + robots[i] * time_left for i in (0, 1, 2, 3)]
+                score = new_resources[-1]
                 queue.append(
-                    (
-                        time_left - time_to_farm - 1,
-                        [r + 1 if k == i else r for k, r in enumerate(robots)],
-                        new_resources,
-                        actions + [(keys[i], time_left)],
-                        new_resources[-1]
-                    )
+                    (0, robots, new_resources, actions + [('stay', time_left)], score)
                 )
-                print(f'append {queue[-1]}')
-        return max_score
 
+                # select robot to build
+                for i in (0, 1, 2, 3):
+                    # continue if number of robots >= max costs of this resource
+                    if i != 3 and robots[i] >= max_costs[i]:
+                        continue
 
+                    # no ores after 15th move
+                    if time_left < init_time - 15 and i == 0:
+                        continue
+
+                    # no clays after 20th move
+                    if time_left < init_time - 25 and i == 1:
+                        continue
+
+                    # check all resources
+                    time_to_farm = []
+                    for j in (0, 1, 2):
+                        if cost_list[i][j] == 0:
+                            time_to_farm.append(0)
+                            continue
+
+                        if robots[j] == 0:
+                            time_to_farm.append(-1)
+                            continue
+
+                        time_to_farm.append(
+                            max(
+                                0,
+                                math.ceil((cost_list[i][j] - resources[j]) / robots[j])
+                            )
+                        )
+
+                    # print(f'robot {i=}, {cost_list[i]=}, {time_to_farm=}')
+                    if -1 in time_to_farm:
+                        continue
+
+                    time_to_farm = max(time_to_farm)
+                    if time_left < time_to_farm + 1:
+                        continue
+
+                    new_resources = [r + robots[k] * (time_to_farm + 1) - cost_list[i][k] for k, r in enumerate(resources)]
+                    queue.append(
+                        (
+                            time_left - time_to_farm - 1,
+                            [r + 1 if k == i else r for k, r in enumerate(robots)],
+                            new_resources,
+                            actions + [(keys[i], init_time - (time_left - time_to_farm) + 1)],
+                            new_resources[-1]
+                        )
+                    )
+                    # print(f'append {queue[-1]}')
+
+            print(bp, max_score, best_path)
+            quantity_level *= max_score
+        return quantity_level
 
 
 
@@ -250,7 +370,7 @@ class Solver(BaseSolver):
     def _as_str(self, d: dict):
         return '-'.join(str(v) for _, v in d.items())
 
-    def _solve_two(self):
+    def _solve_two_prev(self):
         actions = ['ore', 'clay', 'obsidian', 'geode'][::-1]
 
         ql = []
