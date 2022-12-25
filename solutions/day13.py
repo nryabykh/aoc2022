@@ -15,8 +15,6 @@ class Solver(BaseSolver):
                 (*self._single_parse(left), *self._single_parse(right))
             )
         self.data['parsed'] = unpacked
-        # for i, u in enumerate(unpacked):
-        #     print(f'{i=}', u)
 
     @staticmethod
     def _single_parse(line):
@@ -34,11 +32,9 @@ class Solver(BaseSolver):
 
     @staticmethod
     def _check_ints(left: int, right: int):
-        # print(f'checking int: {left=}, {right=}')
         return int(left) <= int(right)
 
     def _check_lists(self, left: list, right: list, lefts_dict: dict, rights_dict: dict) -> int:
-        # print(f'checking lists: {left=}, {right=}, {len(left)=}, {len(right)=}')
         min_len = min(len(left), len(right))
         for i in range(min_len):
             left_c, right_c = left[i], right[i]
@@ -50,7 +46,6 @@ class Solver(BaseSolver):
         return -1 if len(right) == len(left) else len(right) > len(left)
 
     def _check(self, left, right, lefts_dict, rights_dict) -> int:
-        # print(f'global check: {left=}, {right=}')
         if not left and right:
             return True
         if left and not right:
@@ -72,10 +67,7 @@ class Solver(BaseSolver):
     def _solve_one(self):
         total = 0
         for i, (left, lefts_dict, right, rights_dict) in enumerate(self.data['parsed']):
-            # print(f'=== START PACK {i+1} ===')
-            # print(f'=== DATA: {left=}, {right=}, {lefts_dict=}, {rights_dict=}')
             result = bool(self._check_lists(left, right, lefts_dict, rights_dict))
-            # print(f'=== FINISH PACK {i+1}, {result=}')
             if result:
                 total += i+1
         return total
@@ -99,10 +91,6 @@ class Solver(BaseSolver):
                     swaps += 1
                     all_packages[i] = right
                     all_packages[i+1] = left
-                    # print(f'swap {left=}, {right=}')
-        # print(all_packages)
-
-        # insert [[2]], [[6]]
 
         line2, d2 = ['list0'], {'list0': ['2']}
         line6, d6 = ['list0'], {'list0': ['6']}
