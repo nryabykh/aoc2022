@@ -7,7 +7,7 @@
 <img src="images/advent-final-small.png" width="800" alt="AoC2000 final"/>
 
 
-[Advent of Code 2022](https://adventofcode.com/2022) is over. Here you find my solutions.
+[Advent of Code 2022](https://adventofcode.com/2022) is over. Here you can find my solutions.
 
 - Inputs: `./input`
 - Code: `./solutions`
