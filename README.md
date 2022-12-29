@@ -4,10 +4,10 @@
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://aoc2022-nriabykh.streamlit.app/)
 
-<img src="images/banner.jpeg" width="800" alt="AoC2000 banner"/>
+<img src="images/advent-final-small.png" width="800" alt="AoC2000 final"/>
 
 
-My solutions of [Advent of Code 2022](https://adventofcode.com/2022).
+[Advent of Code 2022](https://adventofcode.com/2022) is over. Here you find my solutions.
 
 - Inputs: `./input`
 - Code: `./solutions`
